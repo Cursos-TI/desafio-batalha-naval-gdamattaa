@@ -55,21 +55,21 @@ int main() {
 
     // Posicionar navio horizontal (tamanho 3)
     if (colunaH + 3 <= 10) {
-        for (j = 0; j < 3; j++) {
+        for (j = 0; j < 3; j++) {   //Vai percorrer as 3 posições que o navio horizontal ocuparia
             tabuleiro[linhaH][colunaH + j] = 3;
         }
     }
 
     // Posicionar navio vertical (tamanho 3) verificando sobreposição
-    if (linhaV + 3 <= 10) {
-        int sobreposicao = 0;
-        for (i = 0; i < 3; i++) {
-            if (tabuleiro[linhaV + i][colunaV] == 3) {
-                sobreposicao = 1;
-                break;
+    if (linhaV + 3 <= 10) {     // garante que o navio vertical cabe no tabuleiro
+        int sobreposicao = 0;   // flag que assume 0 = não sobrepõe ou 1 = sobrepõe.
+        for (i = 0; i < 3; i++) {  
+            if (tabuleiro[linhaV + i][colunaV] == 3) {          // Se já existe um "3" nessa posição, significa que
+                sobreposicao = 1;  /*marca a sobreposição*/     // o navio horizontal já está ocupando a casa
+                break;      // não precisa checar mais, já sabemos que sobrepõe
             }
         }
-        if (!sobreposicao) {
+        if (!sobreposicao) {        // só coloca o navio vertical se não houve conflito
             for (i = 0; i < 3; i++) {
                 tabuleiro[linhaV + i][colunaV] = 3;
             }
@@ -77,6 +77,7 @@ int main() {
     }
 
     // Exibir cabeçalho das colunas
+    printf("*** TABULEIRO BATALHA NAVAL ***\n\n");
     printf("   ");
     for (j = 0; j < 10; j++) {
         printf("%d ", j+1);
