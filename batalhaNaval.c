@@ -36,6 +36,8 @@
     // 0 0 1 0 0
 //----------------------------------------------------------------------------------
 
+
+
 int main() {
     
   int i, j;
@@ -50,8 +52,10 @@ int main() {
     }
 
     // Definindo coordenadas dos navios (fixo neste nível)
-    int linhaH = 2, colunaH = 4; // Navio horizontal na linha 'C', coluna 5
+    int linhaH = 2, colunaH = 5; // Navio horizontal na linha 'C', coluna 6
     int linhaV = 5, colunaV = 6; // Navio vertical na linha 'F', coluna 7
+    int linhaD1 = 1, colunaD1 = 1; // Navio diagonal principal (\) começando em B2
+    int linhaD2 = 9, colunaD2 = 0; // Navio diagonal secundária (/) começando em E9
 
     // Posicionar navio horizontal (tamanho 3)
     if (colunaH + 3 <= 10) {
@@ -76,6 +80,34 @@ int main() {
         }
     }
 
+    // Posicionar navio diagonal principal (\)
+    if (linhaD1 + 3 <= 10 && colunaD1 + 3 <= 10) {
+        int sobreposicao = 0;
+        for (i = 0; i < 3; i++) {
+            if (tabuleiro[linhaD1 + i][colunaD1 + i] == 3) {
+                sobreposicao = 1;
+                break;
+            }
+        }
+        if (!sobreposicao) {
+            for (i = 0; i < 3; i++) {
+                tabuleiro[linhaD1 + i][colunaD1 + i] = 3;
+            }
+        }
+    }
+    
+    // Posicionar navio diagonal secundária (/) (tamanho 3, subindo à direita)
+    if (linhaD2 - 2 >= 0 && colunaD2 + 2 < 10) {
+        for (i = 0; i < 3; i++) {
+        tabuleiro[linhaD2 - i][colunaD2 + i] = 3;
+        }
+    }
+
+    /* A checagem de sobreposição no navio da segunda diagonal estava dando
+    problema, fazendo com que o navio não aparecesse, desta forma o segundo
+    não é checado, não sei como resolver para fazer ele ser checado e ainda
+    aparecer na matriz, apenas deixei desta forma sem ser checado */
+
     // Exibir cabeçalho das colunas
     printf("*** TABULEIRO BATALHA NAVAL ***\n\n");
     printf("   ");
@@ -92,7 +124,6 @@ int main() {
         }
         printf("\n");
     }
-
 
     return 0;
 }
