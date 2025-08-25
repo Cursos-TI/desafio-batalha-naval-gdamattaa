@@ -37,7 +37,7 @@
 //----------------------------------------------------------------------------------
 
 
-
+/*
 int main() {
     
   int i, j;
@@ -69,7 +69,7 @@ int main() {
         int sobreposicao = 0;   // flag que assume 0 = não sobrepõe ou 1 = sobrepõe.
         for (i = 0; i < 3; i++) {  
             if (tabuleiro[linhaV + i][colunaV] == 3) {          // Se já existe um "3" nessa posição, significa que
-                sobreposicao = 1;  /*marca a sobreposição*/     // o navio horizontal já está ocupando a casa
+                sobreposicao = 1;  //marca a sobreposição    // o navio horizontal já está ocupando a casa
                 break;      // não precisa checar mais, já sabemos que sobrepõe
             }
         }
@@ -103,10 +103,10 @@ int main() {
         }
     }
 
-    /* A checagem de sobreposição no navio da segunda diagonal estava dando
-    problema, fazendo com que o navio não aparecesse, desta forma o segundo
-    não é checado, não sei como resolver para fazer ele ser checado e ainda
-    aparecer na matriz, apenas deixei desta forma sem ser checado */
+    // A checagem de sobreposição no navio da segunda diagonal estava dando
+    // problema, fazendo com que o navio não aparecesse, desta forma o segundo
+    // não é checado, não sei como resolver para fazer ele ser checado e ainda
+    // aparecer na matriz, apenas deixei desta forma sem ser checado
 
     // Exibir cabeçalho das colunas
     printf("*** TABULEIRO BATALHA NAVAL ***\n\n");
@@ -127,3 +127,135 @@ int main() {
 
     return 0;
 }
+*/
+
+//----------------------------------------------------------------------------------
+
+#include <stdio.h>
+
+#define N 10   // tamanho do tabuleiro
+#define H 5    // tamanho das matrizes de habilidade
+
+int main() {
+    int i, j;
+    int tabuleiro[N][N];
+    char linhas[N] = {'A','B','C','D','E','F','G','H','I','J'};
+
+    // Inicializar o tabuleiro com água
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            tabuleiro[i][j] = 0;
+        }
+    }
+
+    // =========================
+    // NAVIOS FIXOS
+    // =========================
+
+    // Navio horizontal (linha 2, colunas 2-4) -> letra C
+    for (j = 2; j < 5; j++) {
+        tabuleiro[2][j] = 3;
+    }
+
+    // Navio vertical (coluna 4, linhas 5-7) -> letra F
+    for (i = 5; i < 8; i++) {
+        tabuleiro[i][4] = 3;
+    }
+
+    // Navio diagonal (começa em linha 7, coluna 1 -> H2 até J4)
+    for (i = 0; i < 3; i++) {
+        tabuleiro[7+i][1+i] = 3;
+    }
+
+    // =========================
+    // MATRIZES DE HABILIDADE
+    // =========================
+    int cone[H][H];
+    int cruz[H][H];
+    int octaedro[H][H];
+
+    // Cone (aponta para baixo)
+    for (i = 0; i < H; i++) {
+        for (j = 0; j < H; j++) {
+            if (j >= H/2 - i && j <= H/2 + i) 
+                cone[i][j] = 1;
+            else 
+                cone[i][j] = 0;
+        }
+    }
+
+    // Cruz
+    for (i = 0; i < H; i++) {
+        for (j = 0; j < H; j++) {
+            if (i == H/2 || j == H/2) 
+                cruz[i][j] = 1;
+            else 
+                cruz[i][j] = 0;
+        }
+    }
+
+    // Octaedro (losango) sem usar abs
+    for (i = 0; i < H; i++) {
+        for (j = 0; j < H; j++) {
+            if (i <= H/2) {
+                if (j >= (H/2 - i) && j <= (H/2 + i))
+                    octaedro[i][j] = 1;
+                else
+                    octaedro[i][j] = 0;
+            } else {
+                if (j >= (i - H/2) && j < H - (i - H/2))
+                    octaedro[i][j] = 1;
+                else
+                    octaedro[i][j] = 0;
+            }
+        }
+    }
+
+    // =========================
+    // SOBREPOR NO TABULEIRO
+    // =========================
+    int origemLinha = 6, origemColuna = 6;  // centro da habilidade (vai atingir só a linha 6, coluna 6)
+    int habilidade[H][H];
+
+    // Escolher qual matriz usar (exemplo: cruz para acertar só uma casa do navio)
+    for (i = 0; i < H; i++) {
+        for (j = 0; j < H; j++) {
+            habilidade[i][j] = cruz[i][j];   // <- pode trocar para cone ou octaedro
+        }
+    }
+
+    // Aplicar a habilidade no tabuleiro
+    for (i = 0; i < H; i++) {
+        for (j = 0; j < H; j++) {
+            if (habilidade[i][j] == 1) {
+                int linhaT = origemLinha + (i - H/2);
+                int colunaT = origemColuna + (j - H/2);
+                if (linhaT >= 0 && linhaT < N && colunaT >= 0 && colunaT < N) {
+                    // agora permite sobrescrever o navio (só 1 casa será atingida)
+                    tabuleiro[linhaT][colunaT] = 5;
+                }
+            }
+        }
+    }
+
+    // =========================
+    // EXIBIR TABULEIRO
+    // =========================
+    printf("*** TABULEIRO BATALHA NAVAL ***\n\n");
+    printf("   ");
+    for (j = 0; j < N; j++) {
+        printf("%d ", j+1);
+    }
+    printf("\n");
+
+    for (i = 0; i < N; i++) {
+        printf("%c  ", linhas[i]);
+        for (j = 0; j < N; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+
